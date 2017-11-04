@@ -4,13 +4,10 @@ from tkinter import *
 def init(data):
     data.triangles = []
     for i in range(15):
-        data.triangles.append(createTriangle(data))
+        triangle = Triangle(data.width, random.randint(0, windowHeight))
+        data.triangles.append(triangle)
     data.timerMove = 0
     data.currTimer = 5 
-
-def createTriangle(data):
-    triangle = Triangle(data.width)
-    return triangle
 
 class Triangle(object):
     def init(self, windowWidth, yPosition = 0):
