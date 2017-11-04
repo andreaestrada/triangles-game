@@ -4,15 +4,15 @@ from tkinter import *
 
 def init(data):
     data.triangles = []
-    data.triangleSize = 30
-    for i in range(15):
-        triangle = Triangle(data.triangleSize, random.randint(0, data.width-data.triangleSize), random.randint(0, data.height/2))
+    data.triangleSize = 50
+    for i in range(10):
+        triangle = Triangle(data.triangleSize, random.randint(0, data.width-data.triangleSize), random.randint(0, data.height/2), random.randint(0,360))
         data.triangles.append(triangle)
     data.timerSeconds = 0
     data.currTimer = 0
 
 class Triangle(object):
-    def __init__(self, size, x, y):
+    def __init__(self, size, x, y, startingRotation):
         self.size = size #side length of triangle
         self.x = x #bottom left x starting position
         self.y = y #bottom left y starting position
@@ -20,7 +20,7 @@ class Triangle(object):
 
         #animate triangle
         self.rotateDeg = 2 #rotation speed 
-        self.dropSpeed = 2
+        self.dropSpeed = 1
 
         #define coordinates
         coor1 = [self.x, self.y]
@@ -28,8 +28,8 @@ class Triangle(object):
         coor3 = [self.x+self.size/2, self.y-self.size*(3**0.5)/2]
 
         #defining characteristics
-        self.triangleCoors = [coor1, coor2, coor3]
         self.centroid = [(coor1[0] + coor2[0] + coor3[0])/3, (coor1[1] + coor2[1] + coor3[1])/3]
+        self.triangleCoors = self.rotate(startingRotation, self.centroid, [coor1, coor2, coor3])
 
     def rotate(self, angle, centroid, triangle):
         #rotate triangle around centroid
@@ -69,8 +69,10 @@ def timerFired(data):
 
 def mousePressed(event, data):
     mouseCoors = (event.x, event.y)
+    activeTriangles = []
     for triangle in data.triangles:
-        if triangle.hit(mouseCoors, triangle.triangleCoors): triangle.color = "red"
+        if not triangle.hit(mouseCoors, triangle.triangleCoors): activeTriangles.append(triangle)
+    data.triangles = activeTriangles
 
 def keyPressed(event, data): pass
 
