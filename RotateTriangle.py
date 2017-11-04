@@ -1,21 +1,37 @@
 ####################################
 
 from tkinter import *
-import math 
+import math, cmath
 
 def init(data):
     data.size = 100
     data.x = data.width/2
     data.y = 200
+    data.rotateDeg = 2
 
     data.coor1 = (data.x, data.y)
     data.coor2 = (data.x+data.size, data.y)
     data.coor3 = (data.x+data.size/2, data.y-data.size*(3**0.5)/2)
+    data.triangle = [data.coor1, data.coor2, data.coor3]
+    data.centroid = ((data.coor1[0] + data.coor2[0] + data.coor3[0])/3, (data.coor1[1] + data.coor2[1] + data.coor3[1])/3)
 
 def redrawAll(canvas, data):
-    canvas.create_polygon(data.coor1, data.coor2, data.coor3, fill = "black")
+    canvas.create_polygon(data.triangle, fill = "black")
+    canvas.create_oval(data.centroid, data.centroid, width = 5, fill = "red")
 
-def timerFired(data): pass
+def timerFired(data):
+    data.triangle = rotateTriangle(data.rotateDeg, data.centroid, data.triangle)
+
+
+def rotateTriangle(angle, centroid, triangle):
+    cangle = cmath.exp(angle*1j*math.pi/180)
+    offset = complex(centroid[0], centroid[1])
+    rotatedTriangle = []
+    for x, y in triangle:
+        v = cangle*(complex(x,y) - offset) + offset
+        rotatedTriangle.append((v.real, v.imag))
+    return rotatedTriangle
+    
 
 def mousePressed(event, data): pass
 
@@ -47,7 +63,7 @@ def run(width=300, height=300):
     data = Struct()
     data.width = width
     data.height = height
-    data.timerDelay = 1000 # milliseconds
+    data.timerDelay = 10 # milliseconds
     init(data)
     # create the root and the canvas
     root = Tk()
