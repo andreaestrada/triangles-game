@@ -48,16 +48,17 @@ def mousePressed(event, data):
     mouseCoors = (event.x, event.y)
     if triangleHit(mouseCoors, data.triangle): data.color = "red"
 
-def triangleHit(pt,tri):
+def triangleHit(mouse,tri):
     #checks if mouse click is in triangle
-    a = 1/(-tri[1][1]*tri[2][0]+tri[0][1]*(-tri[1][0]+tri[2][0])+ 
+    #uses barycentric coordinates 
+    twiceArea = (-tri[1][1]*tri[2][0]+tri[0][1]*(-tri[1][0]+tri[2][0])+ 
         tri[0][0]*(tri[1][1]-tri[2][1])+tri[1][0]*tri[2][1])
-    s = a*(tri[2][0]*tri[0][1]-tri[0][0]*tri[2][1]+(tri[2][1]-tri[0][1])*pt[0]+ \
-        (tri[0][0]-tri[2][0])*pt[1])
+    s = 1/twiceArea*(tri[2][0]*tri[0][1]-tri[0][0]*tri[2][1]+(tri[2][1]-tri[0][1])*mouse[0]+\
+        (tri[0][0]-tri[2][0])*mouse[1])
     if s<0: return False
-    else: t = a*(tri[0][0]*tri[1][1]-tri[1][0]*tri[0][1]+(tri[0][1]-tri[1][1])*pt[0]+ \
-              (tri[1][0]-tri[0][0])*pt[1])
-    return ((t>0) and (1-s-t>0))
+    t = 1/twiceArea*(tri[0][0]*tri[1][1]-tri[1][0]*tri[0][1]+(tri[0][1]-tri[1][1])*mouse[0]+\
+        (tri[1][0]-tri[0][0])*mouse[1])
+    return (t>0 and 1-s-t>0)
 
 def keyPressed(event,data): pass
 
