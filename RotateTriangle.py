@@ -1,25 +1,25 @@
-import random
+####################################
+
 from tkinter import *
+import math 
 
 def init(data):
-    data.triangles = []
-    for i in range(15):
-        triangle = Triangle(data.width, random.randint(0, windowHeight))
-        data.triangles.append(triangle)
-    data.timerMove = 0
-    data.currTimer = 5
+    data.size = 100
+    data.x = data.width/2
+    data.y = 200
 
-class Triangle(object):
-    def init(self, windowWidth, yPosition = 0):
-        self.sideLen = windowWidth/20
-        self.xPosition = random.randint(0, windowWidth) 
-        self.yPosition = yPosition
-        self.coor1 = (self.xPosition, yPosition)
-        self.coor2 = (self.xPosition + self.sideLen, yPosition)
-        self.coor3 = (self.xPosition + self.sideLen/2, yPosition)
-                
+    data.coor1 = (data.x, data.y)
+    data.coor2 = (data.x+data.size, data.y)
+    data.coor3 = (data.x+data.size/2, data.y-data.size*(3**0.5)/2)
 
-####################################
+def redrawAll(canvas, data):
+    canvas.create_polygon(data.coor1, data.coor2, data.coor3, fill = "black")
+
+def timerFired(data): pass
+
+def mousePressed(event, data): pass
+
+def keyPressed(event,data): pass
 
 def run(width=300, height=300):
     def redrawAllWrapper(canvas, data):
@@ -64,3 +64,5 @@ def run(width=300, height=300):
 
 def main():
 	run (700, 700)
+
+main()
