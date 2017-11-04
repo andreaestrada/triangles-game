@@ -26,7 +26,7 @@ def redrawAll(canvas, data):
     canvas.create_polygon(data.triangle, fill = data.color) #draw triangle
 
 def timerFired(data):
-    data.triangle = rotateTriangle(data.rotateDeg, data.centroid, data.triangle)
+    data.triangle = rotate(data.rotateDeg, data.centroid, data.triangle)
     moveTriangle(data.centroid, data.triangle, data.dropSpeed)
 
 def rotateTriangle(angle, centroid, triangle):
