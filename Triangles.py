@@ -8,7 +8,7 @@ def init(data):
     for i in range(10):
         triangle = Triangle(data.triangleSize, random.randint(0, data.width-data.triangleSize), random.randint(0, data.height/2), random.randint(0,360))
         data.triangles.append(triangle)
-    data.timerSeconds = 0
+    data.timerSeconds = 1000
     data.currTimer = 0
 
 class Triangle(object):
@@ -20,15 +20,17 @@ class Triangle(object):
 
         #animate triangle
         self.rotateDeg = 2 #rotation speed 
-        self.dropSpeed = 1
+        self.dropSpeed = 1.5
 
-        #define coordinates
+        #define starting coordinates
         coor1 = [self.x, self.y]
         coor2 = [self.x+self.size, self.y]
         coor3 = [self.x+self.size/2, self.y-self.size*(3**0.5)/2]
 
-        #defining characteristics
+        #set centroid 
         self.centroid = [(coor1[0] + coor2[0] + coor3[0])/3, (coor1[1] + coor2[1] + coor3[1])/3]
+
+        #random rotation
         self.triangleCoors = self.rotate(startingRotation, self.centroid, [coor1, coor2, coor3])
 
     def rotate(self, angle, centroid, triangle):
@@ -66,11 +68,16 @@ def timerFired(data):
     for triangle in data.triangles:
         triangle.triangleCoors = triangle.rotate(triangle.rotateDeg, triangle.centroid, triangle.triangleCoors)
         triangle.move(triangle.centroid, triangle.triangleCoors, triangle.dropSpeed)
+    data.currTimer += 10
+    if data.currTimer >= data.timerSeconds/2: #1000 milliseconds = 1 second
+        data.currTimer = 0
+        #add new triangle
+        data.triangles.append(Triangle(data.triangleSize, random.randint(0, data.width-data.triangleSize), 0, random.randint(0,360)))
 
 def mousePressed(event, data):
     mouseCoors = (event.x, event.y)
     activeTriangles = []
-    for triangle in data.triangles:
+    for triangle in data.triangles: #eliminate hit triangles
         if not triangle.hit(mouseCoors, triangle.triangleCoors): activeTriangles.append(triangle)
     data.triangles = activeTriangles
 
