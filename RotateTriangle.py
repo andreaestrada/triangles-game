@@ -4,34 +4,44 @@ from tkinter import *
 import math, cmath
 
 def init(data):
-    data.size = 100
-    data.x = data.width/2
-    data.y = 200
-    data.rotateDeg = 2
+    data.size = 100 #side length of triangle
+    data.x = data.width/2 #bottom left x starting position
+    data.y = 200 #bottom left y starting position
 
-    data.coor1 = (data.x, data.y)
-    data.coor2 = (data.x+data.size, data.y)
-    data.coor3 = (data.x+data.size/2, data.y-data.size*(3**0.5)/2)
-    data.triangle = [data.coor1, data.coor2, data.coor3]
-    data.centroid = ((data.coor1[0] + data.coor2[0] + data.coor3[0])/3, (data.coor1[1] + data.coor2[1] + data.coor3[1])/3)
+    #animate triangle
+    data.rotateDeg = 2 #rotation speed 
+    data.dropSpeed = 2
+
+    #define coordinates
+    coor1 = [data.x, data.y]
+    coor2 = [data.x+data.size, data.y]
+    coor3 = [data.x+data.size/2, data.y-data.size*(3**0.5)/2]
+
+    #defining characteristics
+    data.triangle = [coor1, coor2, coor3]
+    data.centroid = [(coor1[0] + coor2[0] + coor3[0])/3, (coor1[1] + coor2[1] + coor3[1])/3]
 
 def redrawAll(canvas, data):
-    canvas.create_polygon(data.triangle, fill = "black")
-    canvas.create_oval(data.centroid, data.centroid, width = 5, fill = "red")
+    canvas.create_polygon(data.triangle, fill = "black") #draw triangle
 
 def timerFired(data):
     data.triangle = rotateTriangle(data.rotateDeg, data.centroid, data.triangle)
-
+    moveTriangle(data.centroid, data.triangle, data.dropSpeed)
 
 def rotateTriangle(angle, centroid, triangle):
+    #rotate triangle around centroid
     cangle = cmath.exp(angle*1j*math.pi/180)
     offset = complex(centroid[0], centroid[1])
     rotatedTriangle = []
     for x, y in triangle:
         v = cangle*(complex(x,y) - offset) + offset
-        rotatedTriangle.append((v.real, v.imag))
+        rotatedTriangle.append([v.real, v.imag])
     return rotatedTriangle
     
+def moveTriangle(centroid, triangle, dropSpeed):
+    for coordinate in triangle:
+        coordinate[1] += dropSpeed
+    centroid[1] += dropSpeed
 
 def mousePressed(event, data): pass
 
@@ -63,7 +73,7 @@ def run(width=300, height=300):
     data = Struct()
     data.width = width
     data.height = height
-    data.timerDelay = 10 # milliseconds
+    data.timerDelay = 10 #100 times/second
     init(data)
     # create the root and the canvas
     root = Tk()
