@@ -4,27 +4,16 @@ from tkinter import *
 
 def init(data):
     data.triangles = []
-<<<<<<< HEAD
-    data.triangleSize = 30
-    for i in range(15):
-        triangle = Triangle(data.triangleSize, random.randint(0, data.width-data.triangleSize), random.randint(0, data.height/2))
-        data.triangles.append(triangle)
-    data.timerSeconds = 0
-    data.currTimer = 0
-
-class Triangle(object):
-    def __init__(self, size, x, y):
-=======
     data.triangleSize = 50
     for i in range(10):
         triangle = Triangle(data.triangleSize, random.randint(0, data.width-data.triangleSize), random.randint(0, data.height/2), random.randint(0,360))
         data.triangles.append(triangle)
     data.timerSeconds = 1000
     data.currTimer = 0
+    data.score = 0
 
 class Triangle(object):
     def __init__(self, size, x, y, startingRotation):
->>>>>>> 72c209b354ca7eb535c761f992b92603287b0757
         self.size = size #side length of triangle
         self.x = x #bottom left x starting position
         self.y = y #bottom left y starting position
@@ -32,32 +21,19 @@ class Triangle(object):
 
         #animate triangle
         self.rotateDeg = 2 #rotation speed 
-<<<<<<< HEAD
-        self.dropSpeed = 2
-
-        #define coordinates
-=======
         self.dropSpeed = 1.5
 
         #define starting coordinates
->>>>>>> 72c209b354ca7eb535c761f992b92603287b0757
         coor1 = [self.x, self.y]
         coor2 = [self.x+self.size, self.y]
         coor3 = [self.x+self.size/2, self.y-self.size*(3**0.5)/2]
 
-<<<<<<< HEAD
-        #defining characteristics
-        self.triangleCoors = [coor1, coor2, coor3]
-        self.centroid = [(coor1[0] + coor2[0] + coor3[0])/3, (coor1[1] + coor2[1] + coor3[1])/3]
-
-=======
         #set centroid 
         self.centroid = [(coor1[0] + coor2[0] + coor3[0])/3, (coor1[1] + coor2[1] + coor3[1])/3]
 
         #random rotation
         self.triangleCoors = self.rotate(startingRotation, self.centroid, [coor1, coor2, coor3])
 
->>>>>>> 72c209b354ca7eb535c761f992b92603287b0757
     def rotate(self, angle, centroid, triangle):
         #rotate triangle around centroid
         cangle = cmath.exp(angle*1j*math.pi/180)
@@ -88,31 +64,26 @@ class Triangle(object):
 def redrawAll(canvas, data):
     for triangle in data.triangles:
         canvas.create_polygon(triangle.triangleCoors, fill = triangle.color) #draw triangle
+    canvas.create_text(80,40, text = "Score: " + str(data.score), font = "Arial 22")
 
 def timerFired(data):
     for triangle in data.triangles:
         triangle.triangleCoors = triangle.rotate(triangle.rotateDeg, triangle.centroid, triangle.triangleCoors)
         triangle.move(triangle.centroid, triangle.triangleCoors, triangle.dropSpeed)
-<<<<<<< HEAD
-
-def mousePressed(event, data):
-    mouseCoors = (event.x, event.y)
-    for triangle in data.triangles:
-        if triangle.hit(mouseCoors, triangle.triangleCoors): triangle.color = "red"
-=======
     data.currTimer += 10
-    if data.currTimer >= data.timerSeconds/2: #1000 milliseconds = 1 second
+    if data.currTimer >= data.timerSeconds/4: #1000 milliseconds = 1 second
         data.currTimer = 0
         #add new triangle
         data.triangles.append(Triangle(data.triangleSize, random.randint(0, data.width-data.triangleSize), 0, random.randint(0,360)))
 
 def mousePressed(event, data):
     mouseCoors = (event.x, event.y)
-    activeTriangles = []
-    for triangle in data.triangles: #eliminate hit triangles
-        if not triangle.hit(mouseCoors, triangle.triangleCoors): activeTriangles.append(triangle)
-    data.triangles = activeTriangles
->>>>>>> 72c209b354ca7eb535c761f992b92603287b0757
+    maxHit = -1
+    for i in range(len(data.triangles)): #eliminate hit triangles
+        if data.triangles[i].hit(mouseCoors, data.triangles[i].triangleCoors): maxHit = i
+    if maxHit > -1:
+        data.triangles = data.triangles[:maxHit] + data.triangles[maxHit+1:]
+        data.score += 1
 
 def keyPressed(event, data): pass
 
